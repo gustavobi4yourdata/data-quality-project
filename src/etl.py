@@ -15,7 +15,7 @@ def extrai_dados(dir_arquivo: str) -> pd.DataFrame:
         df = MetricasFinanceirasBase.validate(df, lazy=True)
         return df
     except pa.errors.SchemaErrors as exc:
-        print("Erro ao dalidar dados:")
+        print("Erro ao validar dados:")
         print(exc)
 
     return df 

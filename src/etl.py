@@ -1,5 +1,8 @@
 import pandas as pd
 import pandera as pa
+from sqlalchemy import create_engine
+import os
+from dotenv import load_dotenv
 from datetime import datetime
 
 from contrato import MetricasFinanceirasBase, MetricasFinanceirasOut
@@ -29,10 +32,27 @@ def transforma_dados(df: pd.DataFrame) -> pd.DataFrame:
     return df_transformado
 
 def carrega_dados(df: pd.DataFrame) -> None:
-    pass
+    load_dotenv(".env")
+
+    POSTGRES_USER = os.getenv("POSTGRES_USER")
+    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+    POSTGRES_HOST = os.getenv("POSTGRES_HOST")
+    POSTGRES_PORT = os.getenv("POSTGRES_PORT")
+    POSTGRES_DB = os.getenv("POSTGRES_DB")
+
+    POSTGRES_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+
+    engine = create_engine(POSTGRES_DATABASE_URL)
+
+    nome_da_tabela = "metricas_financeiras" 
+    try:
+        df.to_sql(nome_da_tabela, engine, if_exists= "replace", index = False)
+    except Exception as e:
+        print(e)
 
 if __name__ == '__main__':
     dir_arquivo = "data/dados_financeiros.csv"
     df = extrai_dados(dir_arquivo)
     df_transformado = transforma_dados(df)
+    carrega_dados(df_transformado)
 

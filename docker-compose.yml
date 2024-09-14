@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres-quality:
+    image: postgres:12.6
+    container_name: postgres-quality
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: user-name
+      POSTGRES_PASSWORD: admindb123
+      POSTGRES_DB: mydb
+    volumes:
+      - ./volumes-postgres/postgres/data:/var/lib/postgresql/data
+    restart: always
